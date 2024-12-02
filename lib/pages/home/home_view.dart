@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:openim/pages/near/near_view.dart';
 import 'package:openim_common/openim_common.dart';
 
 import '../contacts/contacts_view.dart';
@@ -22,6 +23,7 @@ class HomePage extends StatelessWidget {
             children: [
               ConversationPage(),
               ContactsPage(),
+              NearPage(),
               MinePage(),
             ],
           ),
@@ -37,6 +39,15 @@ class HomePage extends StatelessWidget {
                 onClick: logic.switchTab,
                 onDoubleClick: logic.scrollToUnreadMessage,
                 count: logic.unreadMsgCount.value,
+              ),
+              BottomBarItem(
+                selectedImgRes: ImageRes.homeTab2Sel,
+                unselectedImgRes: ImageRes.homeTab2Nor,
+                label: StrRes.contacts,
+                imgWidth: 28.w,
+                imgHeight: 28.h,
+                onClick: logic.switchTab,
+                count: logic.unhandledCount.value,
               ),
               BottomBarItem(
                 selectedImgRes: ImageRes.homeTab2Sel,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:openim/pages/near/near_view.dart';
+import 'package:openim/pages/nearby/nearby_view.dart';
 import 'package:openim_common/openim_common.dart';
 
 import '../contacts/contacts_view.dart';
@@ -22,8 +22,8 @@ class HomePage extends StatelessWidget {
             index: logic.index.value,
             children: [
               ConversationPage(),
+              NearbyPage(),
               ContactsPage(),
-              NearPage(),
               MinePage(),
             ],
           ),

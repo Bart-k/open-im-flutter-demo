@@ -511,4 +511,5 @@ const Map<String, String> zh_CN = {
   "gifNotSupported": "不支持gif图片",
   'otherCallHandle': '已在其他平台%s呼叫请求',
   'callFail': '你无法呼叫该用户',
+  'nearby':'附近人',
 };

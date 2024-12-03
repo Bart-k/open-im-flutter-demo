@@ -86,8 +86,8 @@ import '../pages/register/verify_phone/verify_phone_binding.dart';
 import '../pages/register/verify_phone/verify_phone_view.dart';
 import '../pages/splash/splash_binding.dart';
 import '../pages/splash/splash_view.dart';
-import '../pages/near/near_binding.dart';
-import '../pages/near/near_view.dart';
+import '../pages/nearby/nearby_binding.dart';
+import '../pages/nearby/nearby_view.dart';
 
 part 'app_routes.dart';
 
@@ -125,8 +125,8 @@ class AppPages {
     ),
     _pageBuilder(
       name: AppRoutes.near,
-      page: () => NearPage(),
-      binding: NearBinding(),
+      page: () => NearbyPage(),
+      binding: NearbyBinding(),
     ),
     _pageBuilder(
       name: AppRoutes.chat,

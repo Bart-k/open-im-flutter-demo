@@ -511,4 +511,5 @@ const Map<String, String> en_US = {
   "gifNotSupported": "Gif images are not supported",
   'otherCallHandle': 'Already on other platforms %s call request',
   'callFail': 'You cannot call this user',
+  'nearby':'Nearby',
 };

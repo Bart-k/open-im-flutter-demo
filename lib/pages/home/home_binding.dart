@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../contacts/contacts_logic.dart';
 import '../conversation/conversation_logic.dart';
 import '../mine/mine_logic.dart';
-import '../near/near_logic.dart';
+import '../nearby/nearby_logic.dart';
 import 'home_logic.dart';
 
 class HomeBinding extends Bindings {
@@ -13,6 +13,6 @@ class HomeBinding extends Bindings {
     Get.lazyPut(() => ConversationLogic());
     Get.lazyPut(() => ContactsLogic());
     Get.lazyPut(() => MineLogic());
-    Get.lazyPut(() => NearLogic());
+    Get.lazyPut(() => NearbyLogic());
   }
 }

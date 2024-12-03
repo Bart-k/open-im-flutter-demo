@@ -1042,4 +1042,6 @@ class StrRes {
   static String get otherCallHandle => 'otherCallHandle'.tr;
 
   static String get callFail => 'callFail'.tr;
+
+  static String get nearby => 'Nearby'.tr;
 }

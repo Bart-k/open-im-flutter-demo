@@ -289,4 +289,16 @@ class TitleBar extends StatelessWidget implements PreferredSizeWidget {
           ..width = 24.w
           ..height = 24.h
           ..onTap = (() => Get.back());
+
+
+
+  TitleBar.nearby({
+    super.key,
+    this.showUnderline = false,
+  })  : height = 44.h,
+        backgroundColor = Styles.c_FFFFFF,
+        center = null,
+        left = StrRes.nearby.toText..style = Styles.ts_0C1C33_20sp_semibold,
+        right = null;
+          
 }

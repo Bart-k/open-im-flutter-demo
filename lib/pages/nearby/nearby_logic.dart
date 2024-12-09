@@ -1,5 +1,8 @@
 import 'package:get/get.dart';
 
+import 'package:flutter_openim_sdk/flutter_openim_sdk.dart';
+import 'package:openim_common/openim_common.dart';
+
 class NearbyLogic extends GetxController {
   final text = "ssrrsdds".obs;
   String name = "";
@@ -7,12 +10,18 @@ class NearbyLogic extends GetxController {
   String Profile = "";
   List<String> avatar = [];
 
-  List getUserInfo() {
-    List user = [
-      "https://tse2-mm.cn.bing.net/th/id/OIP-C.5AmeaglwRvHzzdbFVQcJ-QHaNK?w=187&h=333&c=7&r=0&o=5&pid=1.7",
-      "https://tse2-mm.cn.bing.net/th/id/OIP-C.5AmeaglwRvHzzdbFVQcJ-QHaNK?w=187&h=333&c=7&r=0&o=5&pid=1.7",
-      "https://tse2-mm.cn.bing.net/th/id/OIP-C.5AmeaglwRvHzzdbFVQcJ-QHaNK?w=187&h=333&c=7&r=0&o=5&pid=1.7",
-    ];
-    return user;
+  getUserInfo() async {
+    // String nickname = await OpenIM.iMManager.userInfo.nickname.toString();
+
+    List<FriendInfo> temp =
+        await OpenIM.iMManager.friendshipManager.getFriendListPage(
+      offset: 0,
+      count: 40,
+      filterBlack: true,
+    );
+
+    for (var friend in temp) {
+      Logger.print(friend.nickname);
+    }
   }
 }

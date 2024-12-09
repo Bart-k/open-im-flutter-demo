@@ -46,7 +46,7 @@ class NearbyPage extends StatelessWidget {
                             ),
                             Spacer(),
                             Text(
-                              logic.getUserInfo()[0],
+                              "66",
                               style:
                                   TextStyle(color: Colors.white, fontSize: 12),
                             ),

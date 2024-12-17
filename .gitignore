@@ -3,3 +3,5 @@
 /.packages
 /.dart_tool/
 .vscode/
+.idea/
+./android/app/proguard/*

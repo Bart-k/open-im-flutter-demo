@@ -106,6 +106,7 @@ dependencies:
   openim_live:
     path: openim_live
   flutter_staggered_grid_view: ^0.7.0
+  geolocator: ^13.0.2
 
 dependency_overrides:
   wechat_assets_picker: ^8.9.0-dev.1

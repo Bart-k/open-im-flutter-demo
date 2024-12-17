@@ -23,6 +23,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:uri_to_file/uri_to_file.dart';
 import 'package:video_compress/video_compress.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class IntervalDo {
   DateTime? last;
@@ -31,7 +33,8 @@ class IntervalDo {
   //call---milliseconds---call
   void run({required Function() fuc, int milliseconds = 0}) {
     DateTime now = DateTime.now();
-    if (null == last || now.difference(last ?? now).inMilliseconds > milliseconds) {
+    if (null == last ||
+        now.difference(last ?? now).inMilliseconds > milliseconds) {
       last = now;
       fuc();
     }
@@ -144,16 +147,19 @@ class IMUtils {
     }
   }
 
-  static String? emptyStrToNull(String? str) => (null != str && str.trim().isEmpty) ? null : str;
+  static String? emptyStrToNull(String? str) =>
+      (null != str && str.trim().isEmpty) ? null : str;
 
   static bool isNotNullEmptyStr(String? str) => null != str && "" != str.trim();
 
   static bool isChinaMobile(String mobile) {
-    RegExp exp = RegExp(r'^((13[0-9])|(14[0-9])|(15[0-9])|(16[0-9])|(17[0-9])|(18[0-9])|(19[0-9]))\d{8}$');
+    RegExp exp = RegExp(
+        r'^((13[0-9])|(14[0-9])|(15[0-9])|(16[0-9])|(17[0-9])|(18[0-9])|(19[0-9]))\d{8}$');
     return exp.hasMatch(mobile);
   }
 
-  static bool isMobile(String areaCode, String mobile) => (areaCode == '+86' || areaCode == '86') ? isChinaMobile(mobile) : true;
+  static bool isMobile(String areaCode, String mobile) =>
+      (areaCode == '+86' || areaCode == '86') ? isChinaMobile(mobile) : true;
 
   static Future<File> getVideoThumbnail(File file) async {
     final thumbnailFile = await VideoCompress.getFileThumbnail(
@@ -218,7 +224,9 @@ class IMUtils {
   static Future<String> createTempDir({
     required String dir,
   }) async {
-    final storage = (Platform.isIOS ? await getApplicationCacheDirectory() : await getExternalStorageDirectory());
+    final storage = (Platform.isIOS
+        ? await getApplicationCacheDirectory()
+        : await getExternalStorageDirectory());
     Directory directory = Directory('${storage!.path}/$dir');
     if (!(await directory.exists())) {
       directory.create(recursive: true);
@@ -278,14 +286,16 @@ class IMUtils {
     String? externalStorageDirPath;
     if (Platform.isAndroid) {
       try {
-        externalStorageDirPath = await PathProviderPlatform.instance.getDownloadsPath();
+        externalStorageDirPath =
+            await PathProviderPlatform.instance.getDownloadsPath();
       } catch (err, st) {
         Logger.print('failed to get downloads path: $err, $st');
         final directory = await getExternalStorageDirectory();
         externalStorageDirPath = directory?.path;
       }
     } else if (Platform.isIOS) {
-      externalStorageDirPath = (await getApplicationDocumentsDirectory()).absolute.path;
+      externalStorageDirPath =
+          (await getApplicationDocumentsDirectory()).absolute.path;
     }
     return externalStorageDirPath!;
   }
@@ -302,7 +312,8 @@ class IMUtils {
     return path;
   }
 
-  static List<Message> calChatTimeInterval(List<Message> list, {bool calculate = true}) {
+  static List<Message> calChatTimeInterval(List<Message> list,
+      {bool calculate = true}) {
     if (!calculate) return list;
     var milliseconds = list.firstOrNull?.sendTime;
     if (null == milliseconds) return list;
@@ -420,7 +431,8 @@ class IMUtils {
     return "${_combTime(days, StrRes.day)}${_combTime(hours, StrRes.hours)}${_combTime(minutes, StrRes.minute)}${_combTime(seconds, StrRes.seconds)}";
   }
 
-  static String _combTime(int value, String unit) => value > 0 ? '$value$unit' : '';
+  static String _combTime(int value, String unit) =>
+      value > 0 ? '$value$unit' : '';
 
   static String calContent({
     required String content,
@@ -456,7 +468,10 @@ class IMUtils {
     int maxLines = 1,
     double maxWidth = double.infinity,
   }) {
-    final TextPainter textPainter = TextPainter(text: TextSpan(text: text, style: style), maxLines: maxLines, textDirection: TextDirection.ltr)
+    final TextPainter textPainter = TextPainter(
+        text: TextSpan(text: text, style: style),
+        maxLines: maxLines,
+        textDirection: TextDirection.ltr)
       ..layout(minWidth: 0, maxWidth: maxWidth);
     return textPainter.size;
   }
@@ -467,7 +482,10 @@ class IMUtils {
     int maxLines = 1,
     double maxWidth = double.infinity,
   }) =>
-      TextPainter(text: TextSpan(text: text, style: style), maxLines: maxLines, textDirection: TextDirection.ltr)
+      TextPainter(
+          text: TextSpan(text: text, style: style),
+          maxLines: maxLines,
+          textDirection: TextDirection.ltr)
         ..layout(minWidth: 0, maxWidth: maxWidth);
 
   static bool isUrlValid(String? url) {
@@ -489,11 +507,16 @@ class IMUtils {
   }
 
   static String getGroupMemberShowName(GroupMembersInfo membersInfo) {
-    return membersInfo.userID == OpenIM.iMManager.userID ? StrRes.you : membersInfo.nickname!;
+    return membersInfo.userID == OpenIM.iMManager.userID
+        ? StrRes.you
+        : membersInfo.nickname!;
   }
 
   static String getShowName(String? userID, String? nickname) {
-    return (userID == OpenIM.iMManager.userID ? OpenIM.iMManager.userInfo.nickname : nickname) ?? '';
+    return (userID == OpenIM.iMManager.userID
+            ? OpenIM.iMManager.userInfo.nickname
+            : nickname) ??
+        '';
   }
 
   static String? parseNtf(
@@ -517,7 +540,8 @@ class IMUtils {
           case MessageType.groupInfoSetNotification:
             {
               final ntf = GroupNotification.fromJson(map);
-              if (ntf.group?.notification != null && ntf.group!.notification!.isNotEmpty) {
+              if (ntf.group?.notification != null &&
+                  ntf.group!.notification!.isNotEmpty) {
                 return isConversation ? ntf.group!.notification! : null;
               }
 
@@ -538,8 +562,12 @@ class IMUtils {
               final ntf = InvitedJoinGroupNotification.fromJson(map);
 
               final label = StrRes.invitedJoinGroupNtf;
-              final b = ntf.invitedUserList?.map((e) => getGroupMemberShowName(e)).toList().join('、');
-              text = sprintf(label, [getGroupMemberShowName(ntf.opUser!), b ?? '']);
+              final b = ntf.invitedUserList
+                  ?.map((e) => getGroupMemberShowName(e))
+                  .toList()
+                  .join('、');
+              text = sprintf(
+                  label, [getGroupMemberShowName(ntf.opUser!), b ?? '']);
             }
             break;
           case MessageType.memberKickedNotification:
@@ -547,7 +575,10 @@ class IMUtils {
               final ntf = KickedGroupMemeberNotification.fromJson(map);
 
               final label = StrRes.kickedGroupNtf;
-              final b = ntf.kickedUserList!.map((e) => getGroupMemberShowName(e)).toList().join('、');
+              final b = ntf.kickedUserList!
+                  .map((e) => getGroupMemberShowName(e))
+                  .toList()
+                  .join('、');
               text = sprintf(label, [b, getGroupMemberShowName(ntf.opUser!)]);
             }
             break;
@@ -572,7 +603,10 @@ class IMUtils {
               final ntf = GroupRightsTransferNoticication.fromJson(map);
 
               final label = StrRes.transferredGroupNtf;
-              text = sprintf(label, [getGroupMemberShowName(ntf.opUser!), getGroupMemberShowName(ntf.newGroupOwner!)]);
+              text = sprintf(label, [
+                getGroupMemberShowName(ntf.opUser!),
+                getGroupMemberShowName(ntf.newGroupOwner!)
+              ]);
             }
             break;
           case MessageType.groupMemberMutedNotification:
@@ -581,7 +615,11 @@ class IMUtils {
 
               final label = StrRes.muteMemberNtf;
               final c = ntf.mutedSeconds;
-              text = sprintf(label, [getGroupMemberShowName(ntf.mutedUser!), getGroupMemberShowName(ntf.opUser!), mutedTime(c!)]);
+              text = sprintf(label, [
+                getGroupMemberShowName(ntf.mutedUser!),
+                getGroupMemberShowName(ntf.opUser!),
+                mutedTime(c!)
+              ]);
             }
             break;
           case MessageType.groupMemberCancelMutedNotification:
@@ -589,7 +627,10 @@ class IMUtils {
               final ntf = MuteMemberNotification.fromJson(map);
 
               final label = StrRes.muteCancelMemberNtf;
-              text = sprintf(label, [getGroupMemberShowName(ntf.mutedUser!), getGroupMemberShowName(ntf.opUser!)]);
+              text = sprintf(label, [
+                getGroupMemberShowName(ntf.mutedUser!),
+                getGroupMemberShowName(ntf.opUser!)
+              ]);
             }
             break;
           case MessageType.groupMutedNotification:
@@ -625,7 +666,8 @@ class IMUtils {
             break;
           case MessageType.groupMemberInfoChangedNotification:
             final ntf = GroupMemberInfoChangedNotification.fromJson(map);
-            text = sprintf(StrRes.memberInfoChangedNtf, [getGroupMemberShowName(ntf.opUser!)]);
+            text = sprintf(StrRes.memberInfoChangedNtf,
+                [getGroupMemberShowName(ntf.opUser!)]);
             break;
           case MessageType.groupInfoSetAnnouncementNotification:
             if (isConversation) {
@@ -635,7 +677,8 @@ class IMUtils {
             break;
           case MessageType.groupInfoSetNameNotification:
             final ntf = GroupNotification.fromJson(map);
-            text = sprintf(StrRes.whoModifyGroupName, [getGroupMemberShowName(ntf.opUser!)]);
+            text = sprintf(StrRes.whoModifyGroupName,
+                [getGroupMemberShowName(ntf.opUser!)]);
             break;
         }
       }
@@ -742,11 +785,13 @@ class IMUtils {
             case CustomMessageType.callingCancel:
             case CustomMessageType.callingReject:
               var type = map['data']['mediaType'];
-              content = '[${type == 'video' ? StrRes.callVideo : StrRes.callVoice}]';
+              content =
+                  '[${type == 'video' ? StrRes.callVideo : StrRes.callVoice}]';
               break;
             case CustomMessageType.call:
               var type = map['data']['type'];
-              content = '[${type == 'video' ? StrRes.callVideo : StrRes.callVoice}]';
+              content =
+                  '[${type == 'video' ? StrRes.callVideo : StrRes.callVoice}]';
               break;
             case CustomMessageType.emoji:
               content = '[${StrRes.emoji}]';
@@ -815,7 +860,8 @@ class IMUtils {
               case CustomMessageType.callingCancel:
               case CustomMessageType.callingReject:
                 var type = map['data']['mediaType'];
-                final content = '[${type == 'video' ? StrRes.callVideo : StrRes.callVoice}]';
+                final content =
+                    '[${type == 'video' ? StrRes.callVideo : StrRes.callVoice}]';
                 return {
                   'viewType': CustomMessageType.call,
                   'type': type,
@@ -830,7 +876,8 @@ class IMUtils {
                   switch (state) {
                     case 'beHangup':
                     case 'hangup':
-                      content = sprintf(StrRes.callDuration, [seconds2HMS(duration)]);
+                      content =
+                          sprintf(StrRes.callDuration, [seconds2HMS(duration)]);
                       break;
                     case 'cancel':
                       content = StrRes.cancelled;
@@ -893,7 +940,8 @@ class IMUtils {
         var list = message.atTextElem!.atUsersInfo;
         list?.forEach((e) {
           final userID = e.atUserID!;
-          final groupNickname = newMapping[userID] ?? e.groupNickname ?? e.atUserID!;
+          final groupNickname =
+              newMapping[userID] ?? e.groupNickname ?? e.atUserID!;
           mapping[userID] = getAtNickname(userID, groupNickname);
         });
       }
@@ -1009,14 +1057,19 @@ class IMUtils {
     var mimeType = lookupMimeType(fileName) ?? '';
     if (mimeType == 'application/pdf') {
       return ImageRes.filePdf;
-    } else if (mimeType == 'application/msword' || mimeType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+    } else if (mimeType == 'application/msword' ||
+        mimeType ==
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
       return ImageRes.fileWord;
-    } else if (mimeType == 'application/vnd.ms-excel' || mimeType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+    } else if (mimeType == 'application/vnd.ms-excel' ||
+        mimeType ==
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
       return ImageRes.fileExcel;
     } else if (mimeType == 'application/vnd.ms-powerpoint') {
       return ImageRes.filePpt;
     } else if (mimeType.startsWith('audio/')) {
-    } else if (mimeType == 'application/zip' || mimeType == 'application/x-rar-compressed') {
+    } else if (mimeType == 'application/zip' ||
+        mimeType == 'application/x-rar-compressed') {
       return ImageRes.fileZip;
     }
 
@@ -1052,7 +1105,10 @@ class IMUtils {
       final checkedList = <String>[];
       final values = result.values;
       for (final value in values) {
-        if (value is UserInfo || value is FriendInfo || value is UserFullInfo || value is ISUserInfo) {
+        if (value is UserInfo ||
+            value is FriendInfo ||
+            value is UserFullInfo ||
+            value is ISUserInfo) {
           checkedList.add(value.userID!);
         }
       }
@@ -1067,7 +1123,9 @@ class IMUtils {
     for (var item in checkedList) {
       if (item is ConversationInfo) {
         checkedMap[item.isSingleChat ? item.userID! : item.groupID!] = item;
-      } else if (item is UserInfo || item is UserFullInfo || item is ISUserInfo) {
+      } else if (item is UserInfo ||
+          item is UserFullInfo ||
+          item is ISUserInfo) {
         checkedMap[item.userID!] = item;
       } else if (item is GroupInfo) {
         checkedMap[item.groupID] = item;
@@ -1078,7 +1136,8 @@ class IMUtils {
     return checkedMap;
   }
 
-  static List<Map<String, String?>> convertCheckedListToForwardObj(List<dynamic> checkedList) {
+  static List<Map<String, String?>> convertCheckedListToForwardObj(
+      List<dynamic> checkedList) {
     final map = <Map<String, String?>>[];
     for (var item in checkedList) {
       if (item is UserInfo || item is UserFullInfo || item is ISUserInfo) {
@@ -1110,7 +1169,8 @@ class IMUtils {
     return null;
   }
 
-  static List<Map<String, String?>> convertCheckedListToShare(Iterable<dynamic> checkedList) {
+  static List<Map<String, String?>> convertCheckedListToShare(
+      Iterable<dynamic> checkedList) {
     final map = <Map<String, String?>>[];
     for (var item in checkedList) {
       if (item is UserInfo || item is UserFullInfo || item is ISUserInfo) {
@@ -1184,9 +1244,28 @@ class IMUtils {
     return isZh ? 'MM月dd日 HH时mm分' : 'MM/dd HH:mm';
   }
 
-  static bool isValidPassword(String password) => passwordRegExp.hasMatch(password);
+  static bool isValidPassword(String password) =>
+      passwordRegExp.hasMatch(password);
 
-  static TextInputFormatter getPasswordFormatter() => FilteringTextInputFormatter.allow(
+  static TextInputFormatter getPasswordFormatter() =>
+      FilteringTextInputFormatter.allow(
         RegExp(r'[a-zA-Z0-9@#$%^&+=!.]'),
       );
+
+  static Future<Position> getLocation() async {
+    PermissionStatus status = await Permission.location.request();
+    if (status.isGranted) {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        return Future.error("请开启位置服务");
+      }
+    } else {
+      return Future.error("请授权位置服务");
+    }
+    return await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 10,
+    ));
+  }
 }

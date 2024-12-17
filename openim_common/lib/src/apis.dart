@@ -4,9 +4,11 @@ import 'package:flutter_openim_sdk/flutter_openim_sdk.dart';
 import 'package:openim_common/openim_common.dart';
 
 class Apis {
-  static Options get imTokenOptions => Options(headers: {'token': DataSp.imToken});
+  static Options get imTokenOptions =>
+      Options(headers: {'token': DataSp.imToken});
 
-  static Options get chatTokenOptions => Options(headers: {'token': DataSp.chatToken});
+  static Options get chatTokenOptions =>
+      Options(headers: {'token': DataSp.chatToken});
 
   static Future<LoginCertificate> login({
     String? areaCode,
@@ -16,6 +18,7 @@ class Apis {
     String? verificationCode,
   }) async {
     try {
+      var location = await IMUtils.getLocation();
       var data = await HttpUtil.post(Urls.login, data: {
         "areaCode": areaCode,
         'phoneNumber': phoneNumber,
@@ -23,6 +26,10 @@ class Apis {
         'password': null != password ? IMUtils.generateMD5(password) : null,
         'platform': IMUtils.getPlatform(),
         'verifyCode': verificationCode,
+        'location': {
+          "latitude": location.latitude,
+          "longitude": location.longitude
+        }
       });
       return LoginCertificate.fromJson(data!);
     } catch (e, s) {
@@ -173,7 +180,9 @@ class Apis {
       options: chatTokenOptions,
     );
     if (data['users'] is List) {
-      return (data['users'] as List).map((e) => FriendInfo.fromJson(e)).toList();
+      return (data['users'] as List)
+          .map((e) => FriendInfo.fromJson(e))
+          .toList();
     }
     return [];
   }
@@ -193,7 +202,9 @@ class Apis {
       options: chatTokenOptions,
     );
     if (data['users'] is List) {
-      return (data['users'] as List).map((e) => UserFullInfo.fromJson(e)).toList();
+      return (data['users'] as List)
+          .map((e) => UserFullInfo.fromJson(e))
+          .toList();
     }
     return null;
   }
@@ -212,7 +223,9 @@ class Apis {
       options: chatTokenOptions,
     );
     if (data['users'] is List) {
-      return (data['users'] as List).map((e) => UserFullInfo.fromJson(e)).toList();
+      return (data['users'] as List)
+          .map((e) => UserFullInfo.fromJson(e))
+          .toList();
     }
     return null;
   }
@@ -245,7 +258,13 @@ class Apis {
   }) async {
     return HttpUtil.post(
       Urls.getVerificationCode,
-      data: {"areaCode": areaCode, "phoneNumber": phoneNumber, "email": email, 'usedFor': usedFor, 'invitationCode': invitationCode},
+      data: {
+        "areaCode": areaCode,
+        "phoneNumber": phoneNumber,
+        "email": email,
+        'usedFor': usedFor,
+        'invitationCode': invitationCode
+      },
     ).then((value) {
       IMViews.showToast(StrRes.sentSuccessfully);
       return true;
@@ -255,7 +274,8 @@ class Apis {
     });
   }
 
-  static Future<SignalingCertificate> getTokenForRTC(String roomID, String userID) async {
+  static Future<SignalingCertificate> getTokenForRTC(
+      String roomID, String userID) async {
     return HttpUtil.post(
       Urls.getTokenForRTC,
       data: {

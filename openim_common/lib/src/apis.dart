@@ -18,7 +18,6 @@ class Apis {
     String? verificationCode,
   }) async {
     try {
-      var location = await IMUtils.getLocation();
       var data = await HttpUtil.post(Urls.login, data: {
         "areaCode": areaCode,
         'phoneNumber': phoneNumber,
@@ -26,10 +25,6 @@ class Apis {
         'password': null != password ? IMUtils.generateMD5(password) : null,
         'platform': IMUtils.getPlatform(),
         'verifyCode': verificationCode,
-        'location': {
-          "latitude": location.latitude,
-          "longitude": location.longitude
-        }
       });
       return LoginCertificate.fromJson(data!);
     } catch (e, s) {
@@ -133,6 +128,7 @@ class Apis {
     int? allowAddFriend,
     int? allowBeep,
     int? allowVibration,
+    dynamic location,
   }) async {
     Map<String, dynamic> param = {'userID': userID};
     void put(String key, dynamic value) {
@@ -154,6 +150,7 @@ class Apis {
     put('allowAddFriend', allowAddFriend);
     put('allowBeep', allowBeep);
     put('allowVibration', allowVibration);
+    put('location', location);
 
     return HttpUtil.post(
       Urls.updateUserInfo,
